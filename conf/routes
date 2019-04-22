@@ -1,4 +1,11 @@
 # Routes
 
+POST    /user                               controllers.MinesweeperController.createUser()
+GET     /users/:userId/games                controllers.MinesweeperController.listGamesByPlayer(userId: Long)
+POST    /game                               controllers.MinesweeperController.createGame
+POST    /game/:gameId/moveRequest           controllers.MinesweeperController.move(gameId: Long)
+POST    /game/:gameId/suspensionRequest     controllers.MinesweeperController.suspend(gameId: Long)
+POST    /game/:gameId/resumeRequest         controllers.MinesweeperController.resume(gameId: Long)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

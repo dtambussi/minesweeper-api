@@ -1,6 +1,7 @@
 package models
 
 import models.Board.Matrix
+import play.api.libs.json.{JsString, JsValue, Json, Writes}
 import services.BoardChecker
 
 case class Position(x: Int, y: Int)
@@ -32,8 +33,6 @@ object Cell {
 
 case class Board(cells: Matrix) {
 
-  self => this
-
   def rowCount: Int = cells.length
 
   def columnCount: Int = cells(0).length
@@ -49,9 +48,9 @@ case class Board(cells: Matrix) {
   def reveal(x: Int, y: Int): Either[String, Board] = if (withinBounds(x, y)) Right(doReveal(x, y)) else Left("game.move.reveal.error")
 
   private def doReveal(x: Int, y: Int): Board = {
-    val cell: Cell = self.cell(x, y)
+    val cell: Cell = this.cell(x, y)
     cell match {
-      case Cell(_, _, true, _, _) => self // already revealed
+      case Cell(_, _, true, _, _) => this // already revealed
       case Cell(Mine, _, _, _, _) | Cell(Hint, _, _, _, _) => doRevealCell(x, y, cell)
       case Cell(Empty,_, _, _, _) => doRevealCell(x, y, cell).revealNeighbours(x, y) // no adjacent mines, so we reveal neighbours
     }
@@ -61,7 +60,7 @@ case class Board(cells: Matrix) {
 
   private def revealNeighbours(x: Int, y: Int): Board = {
     val neighbourPositions = neighbourCellDetails(x, y).map(x => x._1)
-    neighbourPositions.foldLeft(self) ((currentBoard, neighbourPosition) => currentBoard doReveal(neighbourPosition.x, neighbourPosition.y))
+    neighbourPositions.foldLeft(this) ((currentBoard, neighbourPosition) => currentBoard doReveal(neighbourPosition.x, neighbourPosition.y))
   }
 
   def flagAsMine(x: Int, y: Int): Either[String, Board] = {
@@ -105,7 +104,7 @@ case class Board(cells: Matrix) {
     */
   override def toString: String = {
     val array = Array.tabulate(rowCount, columnCount)((x, y) => {
-      val cell = self.cell(x, y)
+      val cell = this.cell(x, y)
       val cellRecord = new StringBuilder
       if (!cell.isRevealed) cellRecord.append(Cell.UndisclosedSymbol)
       if (cell.isMarkedByUser) cellRecord.append(Cell.QuestionMarkSymbol)
@@ -125,6 +124,18 @@ object Board {
 
   val MineCounterValue: Int = 100
   val CellCounterValueMatchExpr = "[\\(\\)]"
+
+  implicit val writes = new Writes[Board] {
+    def writes(board: Board): JsValue = {
+      Json.arr(0 until board.rowCount map {
+        row => {
+          0 until board.columnCount map {
+            col => JsString(Cell.display(board cell(row, col)))
+          }
+        }
+      }).value(0)
+    }
+  }
 
   def apply(rowCount: Int, columnCount: Int): Board = new Board(Array.ofDim[Cell](rowCount, columnCount))
 
@@ -147,5 +158,5 @@ object Board {
     // add all parsed cells to board
     boardCellsByPosition.foldLeft(emptyBoard)((board: Board, addCellDetail: (Position, Cell)) =>
       board update (x = addCellDetail._1.x, y = addCellDetail._1.y, newCellValue = addCellDetail._2))
-    }
+  }
 }

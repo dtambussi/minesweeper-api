@@ -20,7 +20,8 @@ class GameOrchestrator @Inject()(gameRepository: GameRepository, userRepository:
       requestingUser <- userRepository.findById(request.userId).toRight("player.not.found").right
       game <- gameRepository.findById(gameId).toRight("game.not.found").right
       _ <- if (requestingUser == game.player) Right(requestingUser).right else Left("game.suspend.error.userNotAllowed").right
-      suspendedGame <- game.suspend.right
+      timeTrackedGame <- Right(GameTimeTracker.timeTrackGameInteraction(game)).right
+      suspendedGame <- timeTrackedGame.suspend.right
       updatedGame <- Right(gameRepository.update(suspendedGame)).right
     } yield updatedGame
   }
@@ -41,7 +42,8 @@ class GameOrchestrator @Inject()(gameRepository: GameRepository, userRepository:
       requestingUser <- userRepository.findById(request.userId).toRight("player.not.found").right
       game <- gameRepository.findById(gameId).toRight("game.not.found").right
       _ <- if (requestingUser == game.player) Right(requestingUser).right else Left("game.move.error.userNotAllowed").right
-      gameAfterMove <-  game.makeMove(MoveType.fromString(request.moveType), request.rowIndex, request.colIndex).right
+      timeTrackedGame <- Right(GameTimeTracker.timeTrackGameInteraction(game)).right
+      gameAfterMove <-  timeTrackedGame.makeMove(MoveType.fromString(request.moveType), request.rowIndex, request.colIndex).right
       updatedGame <- Right(gameRepository.update(gameAfterMove)).right
     } yield updatedGame
   }

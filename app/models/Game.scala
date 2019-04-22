@@ -1,15 +1,29 @@
 package models
 
 import org.joda.time.{DateTime, DateTimeZone}
+import play.api.libs.json._
 import services.BoardGenerator
 
 case class NewGameRequest(userId: Long, rowCount: Int, columnCount: Int, mineCount: Int)
 
+object NewGameRequest {
+  implicit val formatter = Json.format[NewGameRequest]
+}
+
 case class SuspensionRequest(userId: Long)
+object SuspensionRequest {
+  implicit val formatter = Json.format[SuspensionRequest]
+}
 
 case class ResumeRequest(userId: Long)
+object ResumeRequest {
+  implicit val formatter = Json.format[ResumeRequest]
+}
 
 case class MoveRequest(userId: Long, moveType: String, rowIndex: Int, colIndex: Int)
+object MoveRequest {
+  implicit val formatter = Json.format[MoveRequest]
+}
 
 sealed trait MoveType
 case object Reveal extends MoveType
@@ -22,18 +36,18 @@ object MoveType {
 }
 
 case class Game(
-   id: Long,
-   player: User,
-   rowCount: Int,
-   columnCount: Int,
-   mineCount: Int,
-   board: Board,
-   totalTime: Int,
-   createdAt: DateTime,
-   latestInteractionAt: DateTime,
-   isFinished: Boolean = false,
-   isWinner: Boolean = false,
-   isSuspended: Boolean = false) {
+                 id: Long,
+                 player: User,
+                 rowCount: Int,
+                 columnCount: Int,
+                 mineCount: Int,
+                 board: Board,
+                 totalTime: Int,
+                 createdAt: DateTime,
+                 latestInteractionAt: DateTime,
+                 isFinished: Boolean = false,
+                 isWinner: Boolean = false,
+                 isSuspended: Boolean = false) {
 
   def suspend: Either[String, Game] = {
     if (!(isFinished || isSuspended)) {
@@ -88,6 +102,28 @@ case class Game(
 
 object Game {
 
+  implicit val jodaDateReads = Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+  implicit val jodaDateWrites = Writes.jodaDateWrites("yyyy-MM-dd'T'HH:mm:ss.SSSZ'")
+
+  implicit val writes = new Writes[Game] {
+    def writes(game: Game): JsValue = {
+      Json.obj(
+        "id" -> game.id,
+        "rowCount" -> game.rowCount,
+        "columnCount" -> game.columnCount,
+        "mineCount" -> game.mineCount,
+        "rowCount" -> game.rowCount,
+        "totalTimeInSecs" -> game.totalTime,
+        "isSuspended" -> game.isSuspended,
+        "isFinished" -> game.isFinished,
+        "isWinner" -> game.isWinner,
+        "createdAt" -> Json.toJson(game.createdAt),
+        "latestInteractionAt" -> Json.toJson(game.latestInteractionAt),
+        "board" -> Json.toJson(game.board)
+      )
+    }
+  }
+
   def apply(player: User, rowCount: Int, columnCount: Int, mineCount: Int): Either[String, Game] = {
     validateNewGameParams(rowCount, columnCount, mineCount).fold(
       error => Left(error),
@@ -110,4 +146,3 @@ object Game {
     if (mineCount < rowCount * columnCount) Right("Ok") else Left("mineCountMustBeLowerThanTotalCells")
   }
 }
-
