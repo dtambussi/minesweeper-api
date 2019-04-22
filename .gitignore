@@ -1,0 +1,16 @@
+.DS_Store
+.idea
+dist/*
+target/
+lib_managed/
+src_managed/
+project/target
+project/project
+project/plugins/project/
+.history
+.cache
+.lib/
+
+### Scala ###
+*.class
+*.log
