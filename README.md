@@ -253,6 +253,10 @@ Response:
 }
 ```
 
+**List games (just returns an array with the established game json format)**
+
+GET http://138.197.111.116:9000/users/1/games
+
 ## About implementation
 
 * User model is not enforced all the way to having sessions, tried not to spend much time with it
