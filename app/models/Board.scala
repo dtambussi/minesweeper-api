@@ -100,7 +100,20 @@ case class Board(cells: Matrix) {
   def allCellsThatAreNotMinesAreRevealed: Boolean = !cells.flatten.exists(cell => Mine != cell.cellType && !cell.isRevealed)
 
   /**
-    * Full representation, includes detailed cell information
+    * Full representation, includes detailed cell information so we know how to show it
+    *
+    * Example 4 x 4 board contents as stored in DB:
+    *
+    * [-(1),-(100),-(2),-(1),
+    * -(1),?(3),-(100),-(3),
+    * -(1),-(3),!(100),-(100),
+    * -(1),-(100),-(3),-(2)]
+    *
+    *  - : means cell is not revealed
+    * (n): n is cell counter, mines default to 100 as default value
+    *  ?: means cell is marked by user
+    *  !: means cell is mine flagged by user
+    *
     */
   override def toString: String = {
     val array = Array.tabulate(rowCount, columnCount)((x, y) => {

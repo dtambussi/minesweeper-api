@@ -25,7 +25,8 @@ object MoveRequest {
   implicit val formatter = Json.format[MoveRequest]
 }
 
-sealed trait MoveType
+sealed trait
+MoveType
 case object Reveal extends MoveType
 case object FlagAsMine extends MoveType
 case object QuestionMark extends MoveType
