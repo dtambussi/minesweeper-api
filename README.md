@@ -263,7 +263,8 @@ GET http://138.197.111.116:9000/users/1/games
 * No tests present, however I did manual test using POSTMAN
 * Probably a json oriented NoSQL DB would have been a better choice, or even PostgreSQL,
   but tried to make it work with my most usual setup to focus on model implementation 
-* Client implementation in a different language will be added later
+* Client implementation is a Python script in client_scripts folder. To test running it I used
+  https://repl.it/languages/python.
 * Commented on Board model toString method so it is understood how board contents are stored in DB
 * There is room for exploring border scenarios, I tried with less that 1000 rows/cols. For instance,
   if mine count is more than half the cells we could switch to an implementation that uses mines as

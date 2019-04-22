@@ -37,18 +37,18 @@ object MoveType {
 }
 
 case class Game(
-                 id: Long,
-                 player: User,
-                 rowCount: Int,
-                 columnCount: Int,
-                 mineCount: Int,
-                 board: Board,
-                 totalTime: Int,
-                 createdAt: DateTime,
-                 latestInteractionAt: DateTime,
-                 isFinished: Boolean = false,
-                 isWinner: Boolean = false,
-                 isSuspended: Boolean = false) {
+  id: Long,
+  player: User,
+  rowCount: Int,
+  columnCount: Int,
+  mineCount: Int,
+  board: Board,
+  totalTime: Int,
+  createdAt: DateTime,
+  latestInteractionAt: DateTime,
+  isFinished: Boolean = false,
+  isWinner: Boolean = false,
+  isSuspended: Boolean = false) {
 
   def suspend: Either[String, Game] = {
     if (!(isFinished || isSuspended)) {
