@@ -17,7 +17,7 @@ Application is deployed to a DigitalOcean server at 138.197.111.116 (port 9000).
 
 Sample invocations:
 
-1) Create a user
+**Create a user**
 
 POST http://138.197.111.116:9000/user
 
@@ -32,7 +32,7 @@ Reponse:
     "nickname": "dt"
 }
 ```
-2) Add a game with created user as player
+**Add a game with created user as player**
 
 POST 138.197.111.116:9000/game
 
@@ -86,7 +86,7 @@ Response:
     ]
 }
 ```
-3) User makes a move to reveal first item from first row
+**User makes a move to reveal first item from first row**
 
 POST 138.197.111.116:9000/game/1/moveRequest
 
@@ -142,7 +142,7 @@ Response:
 ```
 A Hint was revealed, game continues
 
-4) User makes a move to reveal another cell but hits a mine
+**User makes a move to reveal another cell but hits a mine**
 
 POST 138.197.111.116:9000/game/1/moveRequest (possible moveType values are: Reveal, FlagAsMine, QuestionMark)
 
@@ -198,7 +198,7 @@ Response:
 ```
 Game is finished
 
-5) Suspend game example (a suspendable one)
+**Suspend game example (a suspendable one)**
 
 POST 138.197.111.116:9000/game/2/suspensionRequest
 
@@ -225,7 +225,7 @@ Response:
 }
 ```
 
-5) Resume game example (a suspended one)
+**Resume game example (a suspended one)**
 
 POST 138.197.111.116:9000/game/2/resumeRequest
 
@@ -252,7 +252,6 @@ Response:
     "board": "..." // board contents
 }
 ```
-
 
 ## About implementation
 
